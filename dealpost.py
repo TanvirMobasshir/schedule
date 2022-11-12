@@ -1,5 +1,11 @@
 import math
 import pyperclip
+import json
+from datetime import datetime
+
+
+current_month = datetime.now().month
+months = [None, 'JAN', "FEB", "MAR", 'APR', 'MAY', 'JUNE', 'JULY', 'AUG', 'SEPT', 'OCT', 'NOV', 'DEC']
 
 count = 0
 dealpost_draft = """>>> {} [24 HOURS]<<<
@@ -32,6 +38,18 @@ to confirm.
 Number/Transaction ID for bKash.
 6. Once Payment is confirmed, the order will be placed.
 """
+constants = {
+    'usa_rate': 126,
+    'usa_weight': '200',
+    'usa_week': '5-6',
+    'usa_tutorial': f"Choose 'USA Order Cycle - {months[current_month]} 2022(\"USD\")' & Place the order. ",
+    'usa_tax': 9,
+    'canada_rate': 92,
+    'canada_weight': "200",
+    'canada_week': '5-6',
+    'canada_tutorial': f"Choose 'CANADA Order Cycle - {months[current_month]} 2022(\"CAD\")' & Place the order. ",
+    'canada_tax': 15
+}
 
 
 def get_values():
@@ -104,7 +122,7 @@ def get_values():
         break
 
     dictionary = {
-        'country': country,
+        'country': '',
         'product_name': product_name,
         'product_price': product_price,
         'sale_price': sale_price,
@@ -118,20 +136,74 @@ def get_values():
     return dictionary
 
 
+def change_constant_values():
+    global constants
+
+    print('\n')
+
+    usa_rate = input("USA dollar rate: ")
+    try:
+        constants['usa_rate'] = int(usa_rate)
+    except ValueError:
+        constants['usa_rate'] = constants['usa_rate']
+
+    usa_weight = input("USA weight charge: ")
+    if len(usa_weight) != 0:
+        constants['usa_weight'] = usa_weight
+    else:
+        constants['usa_weight'] = constants['usa_weight']
+
+    usa_week = input("USA shipment time: ")
+    if len(usa_week) != 0:
+        constants['usa_week'] = usa_week
+    else:
+        constants['usa_week'] = constants['usa_week']
+
+    usa_tax = input("USA tax rate: ")
+    try:
+        constants['usa_tax'] = int(usa_tax)
+    except ValueError:
+        constants['usa_tax'] = constants['usa_tax']
+
+    canada_rate = input("canada dollar rate: ")
+    try:
+        constants['canada_rate'] = int(canada_rate)
+    except ValueError:
+        constants['canada_rate'] = constants['canada_rate']
+
+    canada_weight = input("canada weight charge: ")
+    if len(canada_weight) != 0:
+        constants['canada_weight'] = canada_weight
+    else:
+        constants['canada_weight'] = constants['canada_weight']
+
+    canada_week = input("canada shipment time: ")
+    if len(canada_week) != 0:
+        constants['canada_week'] = canada_week
+    else:
+        constants['canada_week'] = constants['canada_week']
+
+    canada_tax = input("canada tax rate: ")
+    try:
+        constants['canada_tax'] = int(canada_tax)
+    except ValueError:
+        constants['canada_tax'] = constants['canada_tax']
+
+
 def assign(dictionary: dict):
     if not dictionary['country']:
         country = 'USA'
-        rate = 122
-        weight_charge = "200"
-        tutorial = "Choose 'USA Order Cycle - Aug 2022(\"USD\")' & Place the order. "
-        week = "5-6" if not dictionary['weeks'] else dictionary['weeks']
+        rate = constants['usa_rate']
+        weight_charge = constants['usa_weight']
+        tutorial = constants['usa_tutorial']
+        week = constants['usa_week'] if not dictionary['weeks'] else dictionary['weeks']
         # if 'amazon' in dictionary['product_link']: week = '4'
     else:
         country = 'CANADA'
-        rate = 92
-        weight_charge = "200"
-        tutorial = "Choose 'CANADA Order Cycle - Aug 2022(\"CAD\")' & Place the order. "
-        week = "5-6" if not dictionary['weeks'] else dictionary['weeks']
+        rate = constants['canada_rate']
+        weight_charge = constants['canada_weight_weight']
+        tutorial = constants['canada_tutorial_tutorial']
+        week = constants['canada_week_week'] if not dictionary['weeks'] else dictionary['weeks']
         # if 'amazon' in dictionary['product_link']: week = '3'
 
     if not dictionary['order_by']:
@@ -142,9 +214,9 @@ def assign(dictionary: dict):
     tax_rate = dictionary['tax_rate']
     if tax_rate == "":
         if country == "CANADA":
-            tax_rate = 15
+            tax_rate = constants['canada_tax']
         elif country == "USA":
-            tax_rate = 9
+            tax_rate = constants['usa_tax']
     else:
         tax_rate = float(dictionary['tax_rate'])
 
@@ -179,9 +251,21 @@ def assign(dictionary: dict):
 
 if __name__ == '__main__':
     while True:
+        print(json.dumps(constants, indent=4))
+        print('\n')
+
+        print(f"\n\ntotal deal posted: {count}")
+        change = input('Change Constant Values? ')
+        if change: change_constant_values()
+        print('\n')
+
         values = get_values()
         post = assign(values)
         pyperclip.copy(post)
         count += 1
+        line = '_______________________________________________________________________________________________________'
+
+        print('\n' + line + '\n' + line)
         print("\n\n" + post)
+        print(line + '\n' + line)
         print(f"\n\ntotal deal posted: {count}\n\n")
