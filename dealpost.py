@@ -5,6 +5,7 @@ from datetime import datetime
 
 
 current_month = datetime.now().month
+current_year = datetime.now().year
 months = [None, 'JAN', "FEB", "MAR", 'APR', 'MAY', 'JUNE', 'JULY', 'AUG', 'SEPT', 'OCT', 'NOV', 'DEC']
 
 count = 0
@@ -39,15 +40,15 @@ Number/Transaction ID for bKash.
 6. Once Payment is confirmed, the order will be placed.
 """
 constants = {
-    'usa_rate': 126,
+    'usa_rate': 132,
     'usa_weight': '200',
-    'usa_week': '5-6',
-    'usa_tutorial': f"Choose 'USA Order Cycle - {months[current_month]} 2022(\"USD\")' & Place the order. ",
+    'usa_week': '6-7',
+    'usa_tutorial': f"Choose 'USA Order Cycle - {months[current_month]} {current_year}(\"USD\")' & Place the order. ",
     'usa_tax': 9,
     'canada_rate': 92,
     'canada_weight': "200",
     'canada_week': '5-6',
-    'canada_tutorial': f"Choose 'CANADA Order Cycle - {months[current_month]} 2022(\"CAD\")' & Place the order. ",
+    'canada_tutorial': f"Choose 'CANADA Order Cycle - {months[current_month]} {current_year}(\"CAD\")' & Place the order. ",
     'canada_tax': 15
 }
 
@@ -261,7 +262,10 @@ if __name__ == '__main__':
 
         values = get_values()
         post = assign(values)
-        pyperclip.copy(post)
+        try:
+            pyperclip.copy(post)
+        except Exception as e:
+            print()
         count += 1
         line = '_______________________________________________________________________________________________________'
 
