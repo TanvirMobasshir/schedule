@@ -240,7 +240,7 @@ def assign(dictionary: dict):
     bdt = final_price * rate
     advance = int((bdt / 2) / 100) * 100
 
-    product_name = dictionary['product_name']
+    product_name = dictionary['product_name'].replace('-', ' ')
     product_link = dictionary['product_link']
 
     country = "SHOPTOBD " + country + " DEAL"
@@ -260,7 +260,14 @@ if __name__ == '__main__':
         if change: change_constant_values()
         print('\n')
 
-        values = get_values()
+        try:
+            values = get_values()
+        except KeyboardInterrupt as e:
+            confirm = input("Are you sure? type 'yes'\n")
+            if confirm != 'yes':
+                continue
+            else:
+            	exit()
         post = assign(values)
         try:
             pyperclip.copy(post)
@@ -273,3 +280,4 @@ if __name__ == '__main__':
         print("\n\n" + post)
         print(line + '\n' + line)
         print(f"\n\ntotal deal posted: {count}\n\n")
+
