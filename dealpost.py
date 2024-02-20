@@ -24,7 +24,7 @@ Advance Required - TK {:,.2f}
 Quantity Available - Limited{}
 
 Expected Shipment Arrival:
-In Between {} Weeks minimum (Exact estimate can't be given)
+In Between {} Weeks minimum (Subject to Change)
 ----------------------------------
 **ATTENTION: Please try to use PC/Laptop & Google Chrome Browser. The system isn't fully compatible with Mobile or \
 other browsers.**
@@ -40,9 +40,9 @@ Number/Transaction ID for bKash.
 6. Once Payment is confirmed, the order will be placed.
 """
 constants = {
-    'usa_rate': 132,
+    'usa_rate': 135,
     'usa_weight': '200',
-    'usa_week': '6-7',
+    'usa_week': '7-8',
     'usa_tutorial': f"Choose 'USA Order Cycle - {months[current_month]} {current_year}(\"USD\")' & Place the order. ",
     'usa_tax': 9,
     'canada_rate': 92,
@@ -51,6 +51,15 @@ constants = {
     'canada_tutorial': f"Choose 'CANADA Order Cycle - {months[current_month]} {current_year}(\"CAD\")' & Place the order. ",
     'canada_tax': 15
 }
+
+
+def latest_post(input_string):
+    subject_to_change_index = input_string.find("(Subject to Change)")
+    if subject_to_change_index != -1:
+        result = input_string[:subject_to_change_index + len("(Subject to Change)")] + "\n----------------------------------\nHow to Order:\nPlease Inbox us with Product Link/Name to get started."
+        return result
+    else:
+        return None
 
 
 def get_values():
@@ -277,7 +286,7 @@ if __name__ == '__main__':
         line = '_______________________________________________________________________________________________________'
 
         print('\n' + line + '\n' + line)
-        print("\n\n" + post)
+        print("\n\n" + latest_post(post))
+#        print("\n\n" + post)
         print(line + '\n' + line)
         print(f"\n\ntotal deal posted: {count}\n\n")
-
