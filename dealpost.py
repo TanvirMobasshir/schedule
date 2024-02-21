@@ -278,6 +278,7 @@ if __name__ == '__main__':
             else:
             	exit()
         post = assign(values)
+        post = latest_post(post)
         try:
             pyperclip.copy(post)
         except Exception as e:
@@ -286,7 +287,6 @@ if __name__ == '__main__':
         line = '_______________________________________________________________________________________________________'
 
         print('\n' + line + '\n' + line)
-        print("\n\n" + latest_post(post))
-#        print("\n\n" + post)
+        print("\n\n" + post)
         print(line + '\n' + line)
         print(f"\n\ntotal deal posted: {count}\n\n")
