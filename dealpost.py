@@ -3,76 +3,47 @@ import pyperclip
 import json
 from datetime import datetime
 
-
 current_month = datetime.now().month
 current_year = datetime.now().year
 months = [None, 'JAN', "FEB", "MAR", 'APR', 'MAY', 'JUNE', 'JULY', 'AUG', 'SEPT', 'OCT', 'NOV', 'DEC']
 
 count = 0
-dealpost_draft = """>>> {} [24 HOURS]<<<
-----------------------------------
-{}{}
-Sale Price - ${:,.2f} ({})
-IN BDT - TK {:,.2f}
-+
-Weight Charge (To be Added After Product Arrival to BD)
-Rate - {}Tk per 100gm
-----------------------------------
-Product Link: {}
-----------------------------------
-Advance Required - TK {:,.2f}
-Quantity Available - Limited{}
 
-Expected Shipment Arrival:
-In Between {} Weeks minimum (Subject to Change)
-----------------------------------
-**ATTENTION: Please try to use PC/Laptop & Google Chrome Browser. The system isn't fully compatible with Mobile or \
-other browsers.**
-----------------------------------
-How to Order:
-1. Sign In/Sign Up to our Ordering Portal here: http://app.shoptobd.com/
-2. {}(Tutorial Video, if needed: http://bit.ly/shoptobdorder)
-3. Shoptobd will verify the order & generate the Initial Invoice. Log back later to check it & contact us \
-to confirm.
-4. Proceed with the Advance for your order. Payment Methods are	mentioned in your account dashboard.
-5. Contact us on FB or through email with the proof of payment, either picture for Deposit Slip or \
-Number/Transaction ID for bKash.
-6. Once Payment is confirmed, the order will be placed.
+new_draft = """
+🏷️ {}{}
+💵 Price (Including Tax in USA): 
+🇺🇸 ${:,.2f} ({})
+🇧🇩 BDT {:,.2f}
+📦 Weight Rate: BDT {}TK/100g 
+(To be Added After Product Arrival to BD)
+🌐 Product Link: {}
+🔢 Quantity: Limited Available
+{}
+--------
+💳 Advance Payment: BDT {:,.2f}
+✈️ Shipment Time: {} Weeks Minimum (Subject to Change)
+--------
+🛒 How to Order:
+➡️ Place Order in our Portal: http://app.shoptobd.com/
+➡️ Inbox Us with Product Name/Image to get started
 """
+
 constants = {
-    'usa_rate': 135,
+    'usa_rate': 134,
     'usa_weight': '200',
     'usa_week': '7-8',
-    'usa_tutorial': f"Choose 'USA Order Cycle - {months[current_month]} {current_year}(\"USD\")' & Place the order. ",
     'usa_tax': 9,
     'canada_rate': 92,
     'canada_weight': "200",
     'canada_week': '5-6',
-    'canada_tutorial': f"Choose 'CANADA Order Cycle - {months[current_month]} {current_year}(\"CAD\")' & Place the order. ",
     'canada_tax': 15
 }
 
 
-def latest_post(input_string):
-    subject_to_change_index = input_string.find("(Subject to Change)")
-    if subject_to_change_index != -1:
-        result = input_string[:subject_to_change_index + len("(Subject to Change)")] + "\n----------------------------------\nHow to Order:\nPlease Inbox us with Product Link/Name to get started."
-        return result
-    else:
-        return None
-
-
 def get_values():
     global count
-    product_name = product_price = sale_price = product_link = shipping = tax_rate = order_by = weeks = None
+    product_name = product_price = sale_price = product_link = shipping = tax_rate = order_by = weeks = color = None
     while True:
-        country = input("Enter Country(capital letters): ")
-        if country == '-1': continue
-        if 'count' in country:
-            count = count + int(country[6:len(country)])
-            print(f"\n\ntotal deal posted: {count}\n\n")
-            continue
-
         product_name = input("Enter product name fully: ")
         if product_name == '-1': continue
         if 'count' in product_name:
@@ -97,6 +68,13 @@ def get_values():
         product_link = input("Enter product link: ")
         if product_link == '-1': continue
         if 'count' in product_link:
+            count = count + int(product_link[6:len(product_link)])
+            print(f"\n\ntotal deal posted: {count}\n\n")
+            continue
+
+        color = input("Enter product Color/Size: ")
+        if color == '-1': continue
+        if 'count' in color:
             count = count + int(product_link[6:len(product_link)])
             print(f"\n\ntotal deal posted: {count}\n\n")
             continue
@@ -132,11 +110,11 @@ def get_values():
         break
 
     dictionary = {
-        'country': '',
         'product_name': product_name,
         'product_price': product_price,
         'sale_price': sale_price,
         'product_link': product_link,
+        "color": color,
         'shipping': shipping,
         'tax_rate': tax_rate,
         'order_by': order_by,
@@ -201,20 +179,9 @@ def change_constant_values():
 
 
 def assign(dictionary: dict):
-    if not dictionary['country']:
-        country = 'USA'
-        rate = constants['usa_rate']
-        weight_charge = constants['usa_weight']
-        tutorial = constants['usa_tutorial']
-        week = constants['usa_week'] if not dictionary['weeks'] else dictionary['weeks']
-        # if 'amazon' in dictionary['product_link']: week = '4'
-    else:
-        country = 'CANADA'
-        rate = constants['canada_rate']
-        weight_charge = constants['canada_weight_weight']
-        tutorial = constants['canada_tutorial_tutorial']
-        week = constants['canada_week_week'] if not dictionary['weeks'] else dictionary['weeks']
-        # if 'amazon' in dictionary['product_link']: week = '3'
+    rate = constants['usa_rate']
+    weight_charge = constants['usa_weight']
+    week = constants['usa_week'] if not dictionary['weeks'] else dictionary['weeks']
 
     if not dictionary['order_by']:
         order_by = ''
@@ -223,10 +190,7 @@ def assign(dictionary: dict):
 
     tax_rate = dictionary['tax_rate']
     if tax_rate == "":
-        if country == "CANADA":
-            tax_rate = constants['canada_tax']
-        elif country == "USA":
-            tax_rate = constants['usa_tax']
+        tax_rate = constants['usa_tax']
     else:
         tax_rate = float(dictionary['tax_rate'])
 
@@ -245,6 +209,10 @@ def assign(dictionary: dict):
     else:
         tax = 'with Tax'
 
+    color = dictionary['color']
+    if color != "":
+        color = f"↔️ Color/Size: {color}"
+
     final_price = math.ceil((product_price + (product_price * tax_rate / 100)))
     bdt = final_price * rate
     advance = int((bdt / 2) / 100) * 100
@@ -252,11 +220,9 @@ def assign(dictionary: dict):
     product_name = dictionary['product_name'].replace('-', ' ')
     product_link = dictionary['product_link']
 
-    country = "SHOPTOBD " + country + " DEAL"
-    dealpost_final = dealpost_draft.format(country, product_name, off, final_price,
-                                           tax, bdt, weight_charge, product_link,
-                                           advance, order_by, week, tutorial)
-    return dealpost_final
+    df = new_draft.format(product_name, off, final_price, tax, bdt, weight_charge, product_link, color, advance,
+                          order_by, week)
+    return df
 
 
 if __name__ == '__main__':
@@ -276,9 +242,8 @@ if __name__ == '__main__':
             if confirm != 'yes':
                 continue
             else:
-            	exit()
+                exit()
         post = assign(values)
-        post = latest_post(post)
         try:
             pyperclip.copy(post)
         except Exception as e:
