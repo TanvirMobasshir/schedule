@@ -11,20 +11,35 @@ count = 0
 
 new_draft = """
 🏷️ {}{}
+
 💵 Price (Including Tax in USA): 
+
 🇺🇸 ${:,.2f} ({})
+
 🇧🇩 BDT {:,.2f}
+
 📦 Weight Rate: BDT {}TK/100g 
+
 (To be Added After Product Arrival to BD)
+
 🌐 Product Link: {}
+
 🔢 Quantity: Limited Available
+
 {}
+
 --------
+
 💳 Advance Payment: BDT {:,.2f}
+{}
 ✈️ Shipment Time: {} Weeks Minimum (Subject to Change)
+
 --------
+
 🛒 How to Order:
+
 ➡️ Place Order in our Portal: http://app.shoptobd.com/
+
 ➡️ Inbox Us with Product Name/Image to get started
 """
 
@@ -186,7 +201,7 @@ def assign(dictionary: dict):
     if not dictionary['order_by']:
         order_by = ''
     else:
-        order_by = f"\nOrder By - {dictionary['order_by']} hours"
+        order_by = f"\nOrder By - {dictionary['order_by']} hours\n"
 
     tax_rate = dictionary['tax_rate']
     if tax_rate == "":
