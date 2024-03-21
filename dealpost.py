@@ -44,7 +44,7 @@ new_draft = """
 """
 
 constants = {
-    'usa_rate': 134,
+    'usa_rate': 132,
     'usa_weight': '200',
     'usa_week': '7-8',
     'usa_tax': 9,
